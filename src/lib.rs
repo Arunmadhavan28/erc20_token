@@ -1,5 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-#![feature(min_specialization)]
+
+
 
 #[ink::contract]
 mod erc20 {
@@ -32,7 +33,7 @@ mod erc20 {
         pub fn new(initial_supply: Balance) -> Self {
             let caller = Self::env().caller();
             let mut balances = Mapping::new(); // ✅ Fixed initialization
-            balances.insert(&caller, &initial_supply);
+            balances.insert(caller, &initial_supply);
 
             Self {
                 total_supply: initial_supply,
@@ -50,7 +51,7 @@ mod erc20 {
         /// Returns the balance of a given account
         #[ink(message)]
         pub fn balance_of(&self, account: AccountId) -> Balance {
-            self.balances.get(&account).unwrap_or(0)
+            self.balances.get(account).unwrap_or(0)
         }
 
         /// Transfers tokens from the caller to another account
@@ -66,7 +67,7 @@ mod erc20 {
 
             // Update sender's balance (checked subtraction to avoid underflow)
             if let Some(new_sender_balance) = sender_balance.checked_sub(amount) {
-                self.balances.insert(&sender, &new_sender_balance);
+                self.balances.insert(sender, &new_sender_balance);
             } else {
                 return false;
             }
@@ -74,7 +75,7 @@ mod erc20 {
             // Update recipient's balance (checked addition to avoid overflow)
             let recipient_balance = self.balance_of(to);
             if let Some(new_recipient_balance) = recipient_balance.checked_add(amount) {
-                self.balances.insert(&to, &new_recipient_balance);
+                self.balances.insert(to, &new_recipient_balance);
             } else {
                 return false;
             }

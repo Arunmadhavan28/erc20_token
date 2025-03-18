@@ -16,7 +16,7 @@ ink_e2e = { version = "5.1.1" }
 [lib]
 name = "erc20_token"
 path = "src/lib.rs"
-crate-type = ["cdylib"]
+#crate-type = ["cdylib"]
 
 [features]
 default = ["std"]
